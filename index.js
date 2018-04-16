@@ -23,7 +23,7 @@ const app = express();
 new cron('*/30 * * * * *',() =>{
 	db.query('SELECT * FROM public_order')
 	.then(result => {
-		if(result.rows.length()>0){
+		if(result.rows.length>0){
 			result.rows.map(r=>{
 				pushMessage(r.id,'定時通知');
 			})
