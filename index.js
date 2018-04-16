@@ -14,7 +14,7 @@ const config = {
 
 const baseURL = process.env.BASE_URL;
 
-const client = new line.client(config);
+const client = new line.Client(config);
 
 const app = express();
 
@@ -48,7 +48,7 @@ const pushMessage = (targetID, message) => {
 	);
 };
 
-const handleEvent(event){
+function handleEvent(event){
 	switch (event.type){
 		case 'message':
 			switch (event.message.type){
