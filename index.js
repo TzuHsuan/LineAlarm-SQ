@@ -1,6 +1,7 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
 const {Pool} = require('pg');
+const eol = require('os').EOL;
 
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
@@ -82,7 +83,7 @@ function handleEvent(event){
 function handleText(message, replyToken, scource){
 	switch(message.text){
 		case '!sub':
-			return replyText(replyToken, 'Sub command. /r/n newline test');
+			return replyText(replyToken, 'Sub command.' +eol+ ' newline test');
 		case '!unsub':
 			return replyText(replyToken, 'Unsub command.');
 		default:
