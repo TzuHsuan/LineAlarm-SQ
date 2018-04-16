@@ -97,10 +97,12 @@ function handleText(message, replyToken, source){
 			}
 			console.log(value);
 			db.connect();
-			db.query('INSERT INTO public_order VALUES($1)', [value])
+			console.log('after connect');
+			db.query('INSERT INTO public_order VALUES($1) RETURNING *', value)
 			.then(res => console.log(res.rows[0]))
 			.catch(e => console.error(e.stack));
-			db.end();
+			//db.end();
+			console.log('after end');
 			return replyText(replyToken, '已訂閱公單通知');
 
 		case '!unsub':
