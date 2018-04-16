@@ -85,13 +85,13 @@ function handleText(message, replyToken, source){
 		case '!訂閱 公單':
 			var value;
 			switch (source.type){
-				case user:
+				case 'user':
 					value = source.userId;
 					break;
-				case group:
+				case 'group':
 					value = source.groupId;
 					break;
-				case room:
+				case 'room':
 					value = source.roomId;
 					break;
 			}
