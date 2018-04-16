@@ -2,6 +2,7 @@ const line = require('@line/bot-sdk');
 const express = require('express');
 const {Pool} = require('pg');
 const eol = require('os').EOL;
+const cron = require('cron');
 
 const db = new Pool({
 	connectionString: process.env.DATABASE_URL,
@@ -18,6 +19,13 @@ const baseURL = process.env.BASE_URL;
 const client = new line.Client(config);
 
 const app = express();
+
+new cron('*/30 * * * * *',() =>{
+	db.query('SELECT * FROM public_order')
+	.then(result => console.log(result))
+	.catch(err=>console.error(err.stack));
+})
+
 
 app.post('/callback', line.middleware(config), (req, res) => {
 
@@ -145,7 +153,7 @@ function handleText(message, replyToken, source){
 			.catch(e => {
 				console.error(e.stack)
 			});			
-			return replyText(replyToken, '已訂閱公單通知');
+			return replyText(replyToken, '已取消公單通知');
 
 
 		default:
