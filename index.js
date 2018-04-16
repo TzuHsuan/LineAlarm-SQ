@@ -34,7 +34,7 @@ app.post('/callback', line.middleware(config), (req, res) => {
 
 const replyText = (token, message) => {
 	message = Array.isArray(message)? message:[message];
-	return clinet.replyMessage(
+	return client.replyMessage(
 		token,
 		message.map((message)=>({type:'text', message}))
 	);
@@ -42,7 +42,7 @@ const replyText = (token, message) => {
 
 const pushMessage = (targetID, message) => {
 	message = Array.isArray(message)? message:[message];
-	return clinet.pushMessage(
+	return client.pushMessage(
 		targetID,
 		message.map((message)=>({type:'text', message}))
 	);
