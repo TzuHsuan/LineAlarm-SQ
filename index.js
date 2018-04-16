@@ -88,6 +88,7 @@ app.post('/callback', line.middleware(config), (req, res) => {
 	});
 });
 
+
 const replyText = (token, message) => {
 	message = Array.isArray(message)? message:[message];
 	return client.replyMessage(
@@ -103,6 +104,31 @@ const pushMessage = (targetID, message) => {
 		message.map((message)=>({type:'text', text:message}))
 	);
 };
+
+const deleteAll = (value) =>{
+			db.query('DELETE FROM public_order WHERE id = $1', [value])
+			.then(res => {
+				console.log(res.rows[0]);
+			})
+			.catch(e => {
+				console.error(e.stack);
+			});
+						db.query('DELETE FROM rob WHERE id = $1', [value])
+			.then(res => {
+				console.log(res.rows[0]);
+			})
+			.catch(e => {
+				console.error(e.stack);
+			});
+						db.query('DELETE FROM goodnight WHERE id = $1', [value])
+			.then(res => {
+				console.log(res.rows[0]);
+			})
+			.catch(e => {
+				console.error(e.stack);
+			});
+
+}
 
 function handleEvent(event){
 	switch (event.type){
@@ -139,13 +165,7 @@ function handleEvent(event){
 					value = source.roomId;
 					break;
 			}
-			db.query('DELETE FROM public_order WHERE id = $1', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack);
-			});
+			deleteAll(value);
 			break;
 
 		default:
@@ -199,7 +219,7 @@ function handleText(message, replyToken, source){
 			});			
 			return replyText(replyToken, '已訂閱搶劫通知');
 
-		case '!訂閱 公單':
+		case '!訂閱 晚安':
 			var value;
 			switch (source.type){
 				case 'user':
@@ -288,8 +308,22 @@ function handleText(message, replyToken, source){
 				console.error(e.stack)
 			});			
 			return replyText(replyToken, '已取消晚安訊息');
-
-
+		
+		case '!離開':
+			var value;
+			switch (source.type){
+				case 'user':
+					value = source.userId;
+					break;
+				case 'group':
+					value = source.groupId;
+					break;
+				case 'room':
+					value = source.roomId;
+					break;
+			}
+			client.leaveRoom(value);
+			deleteAll(value);
 		default:
 			return 0;
 	}
