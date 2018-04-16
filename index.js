@@ -66,7 +66,7 @@ function handleEvent(event){
 			}
 		case 'follow':
 		case 'join':
-			return replyText(event.replyToken, 'Hi, Welcome to line bot. This is a greeting message.')
+			return replyText(event.replyToken, 'Hi, Welcome to line bot. /n This is a greeting message.')
 			// change to basic tutorial
 
 		case 'unfollow':
@@ -76,6 +76,17 @@ function handleEvent(event){
 
 		default:
 			throw new Error(`Unknown even: ${JSON.stringify(event)}`);
+	}
+}
+
+function handleText(message, replyToken, scource){
+	switch(message.text){
+		case '!sub':
+			return replyText(replyToken, 'Sub command.');
+		case '!unsub':
+			return replyText(replyToken, 'Unsub command.');
+		default:
+			return 0;
 	}
 }
 
