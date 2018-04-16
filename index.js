@@ -98,7 +98,7 @@ function handleText(message, replyToken, source){
 			console.log(value);
 			db.connect();
 			console.log('after connect');
-			db.query('INSERT INTO public_order VALUES($1) RETURNING *', value)
+			db.query('INSERT INTO public_order VALUES($1) RETURNING *', [value])
 			.then(res => console.log(res.rows[0]))
 			.catch(e => console.error(e.stack));
 			//db.end();
