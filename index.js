@@ -1,9 +1,9 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
-const {Pool} = require('pg');
+const {Client} = require('pg');
 const eol = require('os').EOL;
 
-const pool = new Pool({
+const db = new Client({
 	connectionString: process.env.DATABASE_URL,
   	ssl: true
 })
@@ -80,10 +80,28 @@ function handleEvent(event){
 	}
 }
 
-function handleText(message, replyToken, scource){
+function handleText(message, replyToken, source){
 	switch(message.text){
-		case '!sub':
-			return replyText(replyToken, 'Sub command.' +eol+ ' newline test');
+		case '!訂閱 公單':
+			var value;
+			switch (source.type){
+				case user:
+					value = source.userId;
+					break;
+				case group:
+					value = source.groupId;
+					break;
+				case room:
+					value = source.roomId;
+					break;
+			}
+			db.connect();
+			db.query('INSERT INTO public_order VALUES($1)', value)
+			.then(res => console.log(res.rows[0]))
+			.catch(e => console.error(e.stack));
+			db.end();
+			return replyText(replyToken, '已訂閱公單通知');
+
 		case '!unsub':
 			return replyText(replyToken, 'Unsub command.');
 		default:
