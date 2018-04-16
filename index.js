@@ -48,7 +48,7 @@ new cron('0 42 11,16,20 * * *',() =>{
 },null,true,'Asia/Taipei');
 
 //每晚提醒
-new cron('0 0 23 * * 0-5',() =>{
+new cron('0 0 23 * * 1-6',() =>{
 	db.query('SELECT * FROM goodnight')
 	.then(result => {
 		if(result.rows.length>0){
@@ -61,7 +61,7 @@ new cron('0 0 23 * * 0-5',() =>{
 },null,true,'Asia/Taipei');
 
 //週日提醒
-new cron('0 0 22 * * 6',() =>{
+new cron('0 0 22 * * 0',() =>{
 	db.query('SELECT * FROM goodnight')
 	.then(result => {
 		if(result.rows.length>0){
@@ -317,12 +317,14 @@ function handleText(message, replyToken, source){
 					break;
 				case 'group':
 					value = source.groupId;
+					client.leaveGroup(value);
 					break;
 				case 'room':
 					value = source.roomId;
+					client.leaveRoom(value);
 					break;
 			}
-			client.leaveRoom(value);
+			
 			deleteAll(value);
 		default:
 			return 0;
