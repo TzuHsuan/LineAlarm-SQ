@@ -82,7 +82,7 @@ function handleEvent(event){
 function handleText(message, replyToken, scource){
 	switch(message.text){
 		case '!sub':
-			return replyText(replyToken, 'Sub command. /n newline test');
+			return replyText(replyToken, 'Sub command. /r/n newline test');
 		case '!unsub':
 			return replyText(replyToken, 'Unsub command.');
 		default:
