@@ -72,7 +72,23 @@ function handleEvent(event){
 
 		case 'unfollow':
 		case 'leave':
-			//TODO remove from sub list
+			var value;
+			switch (source.type){
+				case 'user':
+					value = source.userId;
+					break;
+				case 'group':
+					value = source.groupId;
+					break;
+				case 'room':
+					value = source.roomId;
+					break;
+			}
+			db.connect();
+			db.query('DELETE FROM public_order WHERE id = $1', [value])
+			.then(res => console.log(res.rows[0]))
+			.catch(e => console.error(e.stack));
+			db.end();
 			break;
 
 		default:
@@ -95,14 +111,11 @@ function handleText(message, replyToken, source){
 					value = source.roomId;
 					break;
 			}
-			console.log(value);
 			db.connect();
-			console.log('after connect');
 			db.query('INSERT INTO public_order VALUES($1) RETURNING *', [value])
 			.then(res => console.log(res.rows[0]))
 			.catch(e => console.error(e.stack));
-			//db.end();
-			console.log('after end');
+			db.end();
 			return replyText(replyToken, '已訂閱公單通知');
 
 		case '!unsub':
