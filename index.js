@@ -1,9 +1,9 @@
 const line = require('@line/bot-sdk');
 const express = require('express');
-const {Client} = require('pg');
+const {Pool} = require('pg');
 const eol = require('os').EOL;
 
-const db = new Client({
+const db = new Pool({
 	connectionString: process.env.DATABASE_URL,
   	ssl: true
 })
@@ -88,11 +88,9 @@ function handleEvent(event){
 			db.query('DELETE FROM public_order WHERE id = $1', [value])
 			.then(res => {
 				console.log(res.rows[0]);
-				db.end();
 			})
 			.catch(e => {
 				console.error(e.stack);
-				db.end();
 			});
 			break;
 
@@ -120,11 +118,9 @@ function handleText(message, replyToken, source){
 			db.query('INSERT INTO public_order VALUES($1) RETURNING *', [value])
 			.then(res => {
 				console.log(res.rows[0]);
-				db.end();
 			})
 			.catch(e => {
 				console.error(e.stack)
-				db.end();
 			});			
 			return replyText(replyToken, '已訂閱公單通知');
 
@@ -145,11 +141,9 @@ function handleText(message, replyToken, source){
 			db.query('DELETE FROM public_order WHERE id = $1', [value])
 			.then(res => {
 				console.log(res.rows[0]);
-				db.end();
 			})
 			.catch(e => {
 				console.error(e.stack)
-				db.end();
 			});			
 			return replyText(replyToken, '已訂閱公單通知');
 
