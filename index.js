@@ -22,7 +22,13 @@ const app = express();
 
 new cron('*/30 * * * * *',() =>{
 	db.query('SELECT * FROM public_order')
-	.then(result => console.log(result))
+	.then(result => {
+		if(result.rows.length()>0){
+			result.rows.map(r=>{
+				pushMessage(r.id,'定時通知');
+			})
+		}
+	})
 	.catch(err=>console.error(err.stack));
 },null,true);
 
