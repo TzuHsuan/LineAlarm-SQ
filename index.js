@@ -53,7 +53,7 @@ function handleEvent(event){
 		case 'message':
 			switch (event.message.type){
 				case 'text':
-					return handleText(message, event.replyToken, event.source);
+					return handleText(event.message, event.replyToken, event.source);
 				case 'image':
 				case 'video':
 				case 'audio':
@@ -82,7 +82,7 @@ function handleEvent(event){
 function handleText(message, replyToken, scource){
 	switch(message.text){
 		case '!sub':
-			return replyText(replyToken, 'Sub command.');
+			return replyText(replyToken, 'Sub command. /n newline test');
 		case '!unsub':
 			return replyText(replyToken, 'Unsub command.');
 		default:
