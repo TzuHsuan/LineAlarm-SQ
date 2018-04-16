@@ -36,7 +36,7 @@ const replyText = (token, message) => {
 	message = Array.isArray(message)? message:[message];
 	return client.replyMessage(
 		token,
-		message.map((message)=>({type:'text', message}))
+		message.map((message)=>({type:'text', text:message}))
 	);
 };
 
@@ -44,7 +44,7 @@ const pushMessage = (targetID, message) => {
 	message = Array.isArray(message)? message:[message];
 	return client.pushMessage(
 		targetID,
-		message.map((message)=>({type:'text', message}))
+		message.map((message)=>({type:'text', text:message}))
 	);
 };
 
@@ -66,7 +66,7 @@ function handleEvent(event){
 			}
 		case 'follow':
 		case 'join':
-			return replyText(event.replyToken, 'Hi, Welcome to line bot \n This is a greeting message.')
+			return replyText(event.replyToken, 'Hi, Welcome to line bot. This is a greeting message.')
 			// change to basic tutorial
 
 		case 'unfollow':
