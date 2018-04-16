@@ -86,9 +86,14 @@ function handleEvent(event){
 			}
 			db.connect();
 			db.query('DELETE FROM public_order WHERE id = $1', [value])
-			.then(res => console.log(res.rows[0]))
-			.catch(e => console.error(e.stack));
-			db.end();
+			.then(res => {
+				console.log(res.rows[0]);
+				db.end();
+			})
+			.catch(e => {
+				console.error(e.stack);
+				db.end();
+			});
 			break;
 
 		default:
@@ -113,9 +118,15 @@ function handleText(message, replyToken, source){
 			}
 			db.connect();
 			db.query('INSERT INTO public_order VALUES($1) RETURNING *', [value])
-			.then(res => console.log(res.rows[0]))
-			.catch(e => console.error(e.stack));
-			db.end();
+			.then(res => {
+				console.log(res.rows[0]);
+				db.end();
+			})
+			.catch(e => {
+				console.error(e.stack)
+				db.end();
+			});
+			
 			return replyText(replyToken, '已訂閱公單通知');
 
 		case '!unsub':
