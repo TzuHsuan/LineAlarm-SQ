@@ -2,7 +2,7 @@ const line = require('@line/bot-sdk');
 const express = require('express');
 const {Pool} = require('pg');
 const eol = require('os').EOL;
-const cron = require('cron');
+const cron = require('cron').CronJob;
 
 const db = new Pool({
 	connectionString: process.env.DATABASE_URL,
@@ -24,7 +24,7 @@ new cron('*/30 * * * * *',() =>{
 	db.query('SELECT * FROM public_order')
 	.then(result => console.log(result))
 	.catch(err=>console.error(err.stack));
-})
+},null,true);
 
 
 app.post('/callback', line.middleware(config), (req, res) => {
