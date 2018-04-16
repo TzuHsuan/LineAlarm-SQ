@@ -20,17 +20,17 @@ const client = new line.Client(config);
 
 const app = express();
 
-new cron('*/30 * * * * *',() =>{
+new cron('* 55 10,15,19 * * *',() =>{
 	db.query('SELECT * FROM public_order')
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'定時通知');
+				pushMessage(r.id,'公單即將出現，請準備');
 			})
 		}
 	})
 	.catch(err=>console.error(err.stack));
-},null,true);
+},null,true,'Asia/Taipei');
 
 
 app.post('/callback', line.middleware(config), (req, res) => {
