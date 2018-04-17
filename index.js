@@ -219,6 +219,29 @@ function handleText(message, replyToken, source){
 			});			
 			return replyText(replyToken, '已訂閱搶劫通知');
 
+		case '!測試':
+			var value;
+			switch (source.type){
+				case 'user':
+					value = source.userId;
+					break;
+				case 'group':
+					value = source.groupId;
+					break;
+				case 'room':
+					value = source.roomId;
+					break;
+			}
+			table = 'test'
+			db.query(`INSERT INTO ${table} VALUES($1) RETURNING *`, [value])
+			.then(res => {
+				console.log(res.rows[0]);
+			})
+			.catch(e => {
+				console.error(e.stack)
+			});			
+			return replyText(replyToken, 'test');
+
 		case '!訂閱 晚安':
 			var value;
 			switch (source.type){
