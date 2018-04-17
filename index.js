@@ -203,7 +203,7 @@ function handleEvent(event){
 			}
 		case 'follow':
 		case 'join':
-			return replyText(event.replyToken, '大家好，這裡是食器鬧鐘'+eol+'目前接受的指令：'+eol+'		!訂閱'+eol+'		!取消'+eol+'		!離開'+eol+'能用的參數：'+eol+'	公單'+eol+'		搶劫'+eol+'		晚安'+eol+'		皇家'+eol+'		便當'+eol+'		全部');
+			return replyText(event.replyToken, '大家好，這裡是食器鬧鐘'+eol+'目前接受的指令：'+eol+'		!訂閱'+eol+'		!取消'+eol+'		!離開'+eol+'能用的參數：'+eol+'		公單'+eol+'		搶劫'+eol+'		晚安'+eol+'		皇家'+eol+'		便當'+eol+'		全部');
 			// change to basic tutorial
 
 		case 'unfollow':
