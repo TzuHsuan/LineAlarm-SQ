@@ -211,13 +211,13 @@ function handleEvent(event){
 			var value;
 			switch (event.source.type){
 				case 'user':
-					value = source.userId;
+					value = event.source.userId;
 					break;
 				case 'group':
-					value = source.groupId;
+					value = event.source.groupId;
 					break;
 				case 'room':
-					value = source.roomId;
+					value = event.source.roomId;
 					break;
 			}
 			deleteAll(value);
