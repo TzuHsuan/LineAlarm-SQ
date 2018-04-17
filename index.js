@@ -40,7 +40,7 @@ new cron('0 42 11,16,20 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'公單即將回程，舉起你們的武器！！');
+				pushMessage(r.id,'公單車隊要回程啦！舉起你們的武器！！');
 			})
 		}
 	})
@@ -53,7 +53,7 @@ new cron('0 50 13,19,22 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'便當店即將打烊，不要辜負了老闆的愛心唷 <3');
+				pushMessage(r.id,'便當店即將打烊，不要辜負了老闆的愛心 <3');
 			})
 		}
 	})
@@ -131,17 +131,17 @@ const pushMessage = (targetID, message) => {
 	);
 };
 
-const subAll = (source) => {
+function subAll(source) {
 	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
 	tables.map(table => sub(table, source));
 }
 
-const unsubAll = (source) =>{
+function unsubAll(source) {
 	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
 	tables.map(table => unsub(table, source));
 }
 
-const sub = (table, source) => {
+function sub(table, source) {
 	var value;
 	switch (source.type){
 		case 'user':
@@ -163,7 +163,7 @@ const sub = (table, source) => {
 		});	
 }
 
-const unsub = (table, source) => {
+function unsub(table, source) {
 	var value;
 	switch (source.type){
 		case 'user':
@@ -203,7 +203,7 @@ function handleEvent(event){
 			}
 		case 'follow':
 		case 'join':
-			return replyText(event.replyToken, '大家好，這裡是事件提醒的小助手'+eol+'目前接受的指令有 !訂閱 以及 !取消'+eol+'能用的參數有 公單、搶劫以及晚安')
+			return replyText(event.replyToken, '大家好，這裡是食器鬧鐘'+eol+'目前接受的指令：'+eol+'		!訂閱'+eol+'		!取消'+eol+'		!離開'+eol+'能用的參數：'+eol+'	公單'+eol+'		搶劫'+eol+'		晚安'+eol+'		皇家'+eol+'		便當'+eol+'		全部');
 			// change to basic tutorial
 
 		case 'unfollow':
@@ -230,7 +230,7 @@ function handleEvent(event){
 
 function handleText(message, replyToken, source){
 	switch(message.text){
-		case '!訂閱 全部'
+		case '!訂閱 全部':
 			subAll(source);
 			return replyText(replyToken, '已訂閱所有通知');
 		case '!訂閱 公單':
@@ -290,7 +290,7 @@ function handleText(message, replyToken, source){
 					break;
 			}
 			//fallthrough
-		case '!取消 全部'	
+		case '!取消 全部'	:
 			unsubAll(source);
 			return replyText(replyToken, '已取消所有通知');
 		default:
