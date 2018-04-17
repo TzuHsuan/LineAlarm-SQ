@@ -27,7 +27,7 @@ new cron('0 55 10,15,19 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'公單即將出現，請準備');
+				pushMessage(r.id,'公單即將出現，請準備迎接包子');
 			})
 		}
 	})
@@ -40,7 +40,33 @@ new cron('0 42 11,16,20 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'公單即將回程，請準備好你的傢伙');
+				pushMessage(r.id,'公單即將回程，舉起你們的武器！！');
+			})
+		}
+	})
+	.catch(err=>console.error(err.stack));
+},null,true,'Asia/Taipei');
+
+//便當
+new cron('0 50 13,19,22 * * *',() =>{
+	db.query('SELECT * FROM bento')
+	.then(result => {
+		if(result.rows.length>0){
+			result.rows.map(r=>{
+				pushMessage(r.id,'便當店即將打烊，不要辜負了老闆的愛心唷 <3');
+			})
+		}
+	})
+	.catch(err=>console.error(err.stack));
+},null,true,'Asia/Taipei');
+
+//皇家
+new cron('0 30 8,17 * * *',() =>{
+	db.query('SELECT * FROM royal')
+	.then(result => {
+		if(result.rows.length>0){
+			result.rows.map(r=>{
+				pushMessage(r.id,'競技場次數將於半小時後更新');
 			})
 		}
 	})
@@ -53,7 +79,7 @@ new cron('0 0 23 * * 1-6',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'各位晚安，目前時間為11點'+eol+'還沒有建設以及打公會獸的記得要去唷');
+				pushMessage(r.id,'各位晚安，目前時間為晚上11點'+eol+'還沒有建設以及打公會獸的請記得');
 			})
 		}
 	})
@@ -66,7 +92,7 @@ new cron('0 0 22 * * 0',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'各位晚安，現在已經10點囉'+eol+'提醒今日公會獸將於11點打烊，遺跡沒打完的進度也不能帶到明天喲');
+				pushMessage(r.id,'各位晚安，目前時間為晚上10點'+eol+'今日公會獸會提早在11點回家睡覺'+eol+'遺跡沒打完的進度也不能帶到明天喲'+eol+'還沒完成的請盡快完成');
 			})
 		}
 	})
@@ -105,29 +131,58 @@ const pushMessage = (targetID, message) => {
 	);
 };
 
-const deleteAll = (value) =>{
-			db.query('DELETE FROM public_order WHERE id = $1', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack);
-			});
-						db.query('DELETE FROM rob WHERE id = $1', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack);
-			});
-						db.query('DELETE FROM goodnight WHERE id = $1', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack);
-			});
+const subAll = (source) => {
+	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
+	tables.map(table => sub(table, source));
+}
 
+const unsubAll = (source) =>{
+	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
+	tables.map(table => unsub(table, source));
+}
+
+const sub = (table, source) => {
+	var value;
+	switch (source.type){
+		case 'user':
+			value = source.userId;
+			break;
+		case 'group':
+			value = source.groupId;
+			break;
+		case 'room':
+			value = source.roomId;
+			break;
+	}
+	db.query(`INSERT INTO ${table} VALUES($1) RETURNING *`, [value])
+		.then(res => {
+			console.log(res.rows[0]);
+		})
+		.catch(e => {
+			console.error(e.stack)
+		});	
+}
+
+const unsub = (table, source) => {
+	var value;
+	switch (source.type){
+		case 'user':
+			value = source.userId;
+			break;
+		case 'group':
+			value = source.groupId;
+			break;
+		case 'room':
+			value = source.roomId;
+			break;
+	}
+	db.query(`DELETE FROM ${table} WHERE id = $1`, [value])
+		.then(res => {
+			console.log(res.rows[0]);
+		})
+		.catch(e => {
+			console.error(e.stack)
+		});	
 }
 
 function handleEvent(event){
@@ -175,162 +230,49 @@ function handleEvent(event){
 
 function handleText(message, replyToken, source){
 	switch(message.text){
+		case '!訂閱 全部'
+			subAll(source);
+			return replyText(replyToken, '已訂閱所有通知');
 		case '!訂閱 公單':
-			var value;
-			switch (source.type){
-				case 'user':
-					value = source.userId;
-					break;
-				case 'group':
-					value = source.groupId;
-					break;
-				case 'room':
-					value = source.roomId;
-					break;
-			}
-			db.query('INSERT INTO public_order VALUES($1) RETURNING *', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack)
-			});			
-			return replyText(replyToken, '已訂閱公單通知');
+			sub('public_order', source);
+			return replyText(replyToken, '已訂閱公單提醒');
 
 		case '!訂閱 搶劫':
-			var value;
-			switch (source.type){
-				case 'user':
-					value = source.userId;
-					break;
-				case 'group':
-					value = source.groupId;
-					break;
-				case 'room':
-					value = source.roomId;
-					break;
-			}
-			db.query('INSERT INTO rob VALUES($1) RETURNING *', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack)
-			});			
-			return replyText(replyToken, '已訂閱搶劫通知');
-
-		case '!測試':
-			var value;
-			switch (source.type){
-				case 'user':
-					value = source.userId;
-					break;
-				case 'group':
-					value = source.groupId;
-					break;
-				case 'room':
-					value = source.roomId;
-					break;
-			}
-			table = 'test'
-			db.query(`INSERT INTO ${table} VALUES($1) RETURNING *`, [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack)
-			});			
-			return replyText(replyToken, 'test');
+			sub('rob', source);		
+			return replyText(replyToken, '已訂閱搶劫提醒');
 
 		case '!訂閱 晚安':
-			var value;
-			switch (source.type){
-				case 'user':
-					value = source.userId;
-					break;
-				case 'group':
-					value = source.groupId;
-					break;
-				case 'room':
-					value = source.roomId;
-					break;
-			}
-			db.query('INSERT INTO goodnight VALUES($1) RETURNING *', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack)
-			});			
+			sub('goodnight', source);		
 			return replyText(replyToken, '已訂閱晚安訊息');
 
+		case '!訂閱 便當':
+			sub('goodnight', source);		
+			return replyText(replyToken, '已訂閱便當提醒');
+
+		case '!訂閱 皇家':
+			sub('goodnight', source);		
+			return replyText(replyToken, '已訂閱皇家提醒');
 
 
 		case '!取消 公單':
-			var value;
-			switch (source.type){
-				case 'user':
-					value = source.userId;
-					break;
-				case 'group':
-					value = source.groupId;
-					break;
-				case 'room':
-					value = source.roomId;
-					break;
-			}
-			db.query('DELETE FROM public_order WHERE id = $1', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack)
-			});			
-			return replyText(replyToken, '已取消公單通知');
+			unsub('public_order', source)
+			return replyText(replyToken, '已取消公單提醒');
 
 		case '!取消 搶劫':
-			var value;
-			switch (source.type){
-				case 'user':
-					value = source.userId;
-					break;
-				case 'group':
-					value = source.groupId;
-					break;
-				case 'room':
-					value = source.roomId;
-					break;
-			}
-			db.query('DELETE FROM rob WHERE id = $1', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack)
-			});			
-			return replyText(replyToken, '已取消搶劫通知');
+			unsub('rob', source);	
+			return replyText(replyToken, '已取消搶劫提醒');
 
 		case '!取消 晚安':
-			var value;
-			switch (source.type){
-				case 'user':
-					value = source.userId;
-					break;
-				case 'group':
-					value = source.groupId;
-					break;
-				case 'room':
-					value = source.roomId;
-					break;
-			}
-			db.query('DELETE FROM goodnight WHERE id = $1', [value])
-			.then(res => {
-				console.log(res.rows[0]);
-			})
-			.catch(e => {
-				console.error(e.stack)
-			});			
+			unsub('goodnight', source);		
 			return replyText(replyToken, '已取消晚安訊息');
+
+		case '!取消 便當':
+			sub('goodnight', source);		
+			return replyText(replyToken, '已訂閱便當提醒');
+
+		case '!取消 皇家':
+			sub('goodnight', source);		
+			return replyText(replyToken, '已訂閱皇家提醒');
 		
 		case '!離開':
 			var value;
@@ -347,8 +289,10 @@ function handleText(message, replyToken, source){
 					client.leaveRoom(value);
 					break;
 			}
-			
-			deleteAll(value);
+			//fallthrough
+		case '!取消 全部'	
+			unsubAll(source);
+			return replyText(replyToken, '已取消所有通知');
 		default:
 			return 0;
 	}
