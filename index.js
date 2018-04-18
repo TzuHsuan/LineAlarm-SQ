@@ -220,7 +220,7 @@ function handleEvent(event){
 					value = event.source.roomId;
 					break;
 			}
-			deleteAll(value);
+			unsubAll(value);
 			break;
 
 		default:
@@ -246,11 +246,11 @@ function handleText(message, replyToken, source){
 			return replyText(replyToken, '已訂閱晚安訊息');
 
 		case '!訂閱 便當':
-			sub('goodnight', source);		
+			sub('bento', source);		
 			return replyText(replyToken, '已訂閱便當提醒');
 
 		case '!訂閱 皇家':
-			sub('goodnight', source);		
+			sub('royal', source);		
 			return replyText(replyToken, '已訂閱皇家提醒');
 
 
@@ -267,12 +267,12 @@ function handleText(message, replyToken, source){
 			return replyText(replyToken, '已取消晚安訊息');
 
 		case '!取消 便當':
-			sub('goodnight', source);		
-			return replyText(replyToken, '已訂閱便當提醒');
+			unsub('bento', source);		
+			return replyText(replyToken, '已取消便當提醒');
 
 		case '!取消 皇家':
-			sub('goodnight', source);		
-			return replyText(replyToken, '已訂閱皇家提醒');
+			unsub('royal', source);		
+			return replyText(replyToken, '已取消皇家提醒');
 		
 		case '!離開':
 			var value;
