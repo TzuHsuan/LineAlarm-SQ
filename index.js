@@ -112,6 +112,7 @@ app.post('/callback/sq', line.middleware(sqconfig), (req, res) => {
 
 const replyText = (client, token, message) => {
 	message = Array.isArray(message)? message:[message];
+	console.log(client);
 	return client.replyMessage(
 		token,
 		message.map((message)=>({type:'text', text:message}))
