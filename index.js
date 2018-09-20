@@ -23,7 +23,7 @@ const baseURL = process.env.BASE_URL;
 
 const sqclient = new line.Client(sqconfig);
 
-const mapleclient = new line.Client(mapleconfig);
+//const mapleclient = new line.Client(mapleconfig);
 
 const app = express();
 
