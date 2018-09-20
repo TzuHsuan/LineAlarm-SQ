@@ -375,6 +375,18 @@ function maplehandleEvent(event){
 			}
 		case 'follow':
 		case 'join':
+			var value;
+			switch (event.source.type){
+				case 'user':
+					value = event.source.userId;
+					break;
+				case 'group':
+					value = event.source.groupId;
+					break;
+				case 'room':
+					value = event.source.roomId;
+					break;
+			}
 			sub('maple', value);
 			return replyText(mapleclient, event.replyToken, '大家好，這裡是楓谷小秘書～');
 
