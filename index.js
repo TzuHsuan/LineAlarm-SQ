@@ -376,6 +376,7 @@ function maplehandleEvent(event){
 		case 'follow':
 		case 'join':
 			var value;
+			console.log(event.source.type);
 			switch (event.source.type){
 				case 'user':
 					value = event.source.userId;
@@ -387,6 +388,7 @@ function maplehandleEvent(event){
 					value = event.source.roomId;
 					break;
 			}
+			console.log(value);
 			sub('maple', value);
 			return replyText(mapleclient, event.replyToken, '大家好，這裡是楓谷小秘書～');
 
