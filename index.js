@@ -9,14 +9,21 @@ const db = new Pool({
   	ssl: true
 })
 
-const config = {
-	channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
-	channelSecret: process.env.CHANNEL_SECRET
+const sqconfig = {
+	channelAccessToken: process.env.SQ_CHANNEL_ACCESS_TOKEN,
+	channelSecret: process.env.SQ_CHANNEL_SECRET
+};
+
+const mapleconfig = {
+	channelAccessToken: process.env.MAPLE_CHANNEL_ACCESS_TOKEN,
+	channelSecret: process.env.MAPLE_CHANNEL_SECRET
 };
 
 const baseURL = process.env.BASE_URL;
 
-const client = new line.Client(config);
+const sqclient = new line.Client(sqconfig);
+
+const mapleclient = new line.Client(mapleconfig);
 
 const app = express();
 
@@ -27,25 +34,13 @@ new cron('0 55 10,15,19 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'公單即將出現，請準備迎接包子');
+				pushMessage(sqclient, r.id,'公單即將出現，請準備迎接包子');
 			})
 		}
 	})
 	.catch(err=>console.error(err.stack));
 },null,true,'Asia/Taipei');
 
-//搶劫
-new cron('0 42 11,16,20 * * *',() =>{
-	db.query('SELECT * FROM rob')
-	.then(result => {
-		if(result.rows.length>0){
-			result.rows.map(r=>{
-				pushMessage(r.id,'公單車隊要回程啦！舉起你們的武器！！');
-			})
-		}
-	})
-	.catch(err=>console.error(err.stack));
-},null,true,'Asia/Taipei');
 
 //便當
 new cron('0 50 13,19,22 * * *',() =>{
@@ -53,7 +48,7 @@ new cron('0 50 13,19,22 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'便當店即將打烊，不要辜負了老闆的愛心 <3');
+				pushMessage(sqclient, r.id,'便當店即將打烊，不要辜負了老闆的愛心 <3');
 			})
 		}
 	})
@@ -66,7 +61,7 @@ new cron('0 30 8,17 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'競技場次數將於半小時後更新');
+				pushMessage(sqclient, r.id,'競技場次數將於半小時後更新');
 			})
 		}
 	})
@@ -79,7 +74,7 @@ new cron('0 0 23 * * 1-6',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'各位晚安，目前時間為晚上11點'+eol+'還沒有建設以及打公會獸的請記得');
+				pushMessage(sqclient, r.id,'各位晚安，目前時間為晚上11點'+eol+'還沒有建設以及打公會獸的請記得');
 			})
 		}
 	})
@@ -92,7 +87,7 @@ new cron('0 0 22 * * 0',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(r.id,'各位晚安，目前時間為晚上10點'+eol+'今日公會獸會提早在11點回家睡覺'+eol+'遺跡沒打完的進度也不能帶到明天喲'+eol+'還沒完成的請盡快完成');
+				pushMessage(sqclient, r.id,'各位晚安，目前時間為晚上10點'+eol+'今日公會獸會提早在11點回家睡覺'+eol+'遺跡沒打完的進度也不能帶到明天喲'+eol+'還沒完成的請盡快完成');
 			})
 		}
 	})
@@ -100,13 +95,13 @@ new cron('0 0 22 * * 0',() =>{
 },null,true,'Asia/Taipei');
 
 
-app.post('/callback', line.middleware(config), (req, res) => {
+app.post('/callback/sq', line.middleware(sqconfig), (req, res) => {
 
 	if(!Array.isArray(req.body.events)){
 		return res.status(500).end()
 	}
 
-	Promise.all(req.body.events.map(handleEvent))
+	Promise.all(req.body.events.map(sqhandleEvent))
 	.then(()=>res.end())
 	.catch((err)=>{
 		console.log(err);
@@ -115,7 +110,7 @@ app.post('/callback', line.middleware(config), (req, res) => {
 });
 
 
-const replyText = (token, message) => {
+const replyText = (client, token, message) => {
 	message = Array.isArray(message)? message:[message];
 	return client.replyMessage(
 		token,
@@ -123,7 +118,7 @@ const replyText = (token, message) => {
 	);
 };
 
-const pushMessage = (targetID, message) => {
+const pushMessage = (client, targetID, message) => {
 	message = Array.isArray(message)? message:[message];
 	return client.pushMessage(
 		targetID,
@@ -131,12 +126,12 @@ const pushMessage = (targetID, message) => {
 	);
 };
 
-function subAll(source) {
+function sqsubAll(source) {
 	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
 	tables.map(table => sub(table, source));
 }
 
-function unsubAll(source) {
+function squnsubAll(source) {
 	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
 	tables.map(table => unsub(table, source));
 }
@@ -185,7 +180,7 @@ function unsub(table, source) {
 		});	
 }
 
-function handleEvent(event){
+function sqhandleEvent(event){
 	switch (event.type){
 		case 'message':
 			switch (event.message.type){
@@ -203,8 +198,7 @@ function handleEvent(event){
 			}
 		case 'follow':
 		case 'join':
-			return replyText(event.replyToken, '大家好，這裡是食契鬧鐘'+eol+'目前接受的指令：'+eol+'		!訂閱'+eol+'		!取消'+eol+'		!離開'+eol+'能用的參數：'+eol+'		公單'+eol+'		搶劫'+eol+'		晚安'+eol+'		皇家'+eol+'		便當'+eol+'		全部');
-			// change to basic tutorial
+			return replyText(sqclient, event.replyToken, '大家好，這裡是食契鬧鐘'+eol+'目前接受的指令：'+eol+'		!訂閱'+eol+'		!取消'+eol+'		!離開'+eol+'能用的參數：'+eol+'		公單'+eol+'		晚安'+eol+'		皇家'+eol+'		便當'+eol+'		全部');
 
 		case 'unfollow':
 		case 'leave':
@@ -220,7 +214,7 @@ function handleEvent(event){
 					value = event.source.roomId;
 					break;
 			}
-			unsubAll(value);
+			squnsubAll(value);
 			break;
 
 		default:
@@ -231,48 +225,43 @@ function handleEvent(event){
 function handleText(message, replyToken, source){
 	switch(message.text){
 		case '!訂閱 全部':
-			subAll(source);
-			return replyText(replyToken, '已訂閱所有通知');
+			sqsubAll(source);
+			return replyText(sqclient, replyToken, '已訂閱所有通知');
 		case '!訂閱 公單':
 			sub('public_order', source);
-			return replyText(replyToken, '已訂閱公單提醒');
-
-		case '!訂閱 搶劫':
-			sub('rob', source);		
-			return replyText(replyToken, '已訂閱搶劫提醒');
-
+			return replyText(sqclient, replyToken, '已訂閱公單提醒');
 		case '!訂閱 晚安':
 			sub('goodnight', source);		
-			return replyText(replyToken, '已訂閱晚安訊息');
+			return replyText(sqclient, replyToken, '已訂閱晚安訊息');
 
 		case '!訂閱 便當':
 			sub('bento', source);		
-			return replyText(replyToken, '已訂閱便當提醒');
+			return replyText(sqclient, replyToken, '已訂閱便當提醒');
 
 		case '!訂閱 皇家':
 			sub('royal', source);		
-			return replyText(replyToken, '已訂閱皇家提醒');
+			return replyText(sqclient, replyToken, '已訂閱皇家提醒');
 
 
 		case '!取消 公單':
 			unsub('public_order', source)
-			return replyText(replyToken, '已取消公單提醒');
+			return replyText(sqclient, replyToken, '已取消公單提醒');
 
 		case '!取消 搶劫':
 			unsub('rob', source);	
-			return replyText(replyToken, '已取消搶劫提醒');
+			return replyText(sqclient, replyToken, '已取消搶劫提醒');
 
 		case '!取消 晚安':
 			unsub('goodnight', source);		
-			return replyText(replyToken, '已取消晚安訊息');
+			return replyText(sqclient, replyToken, '已取消晚安訊息');
 
 		case '!取消 便當':
 			unsub('bento', source);		
-			return replyText(replyToken, '已取消便當提醒');
+			return replyText(sqclient, replyToken, '已取消便當提醒');
 
 		case '!取消 皇家':
 			unsub('royal', source);		
-			return replyText(replyToken, '已取消皇家提醒');
+			return replyText(sqclient, replyToken, '已取消皇家提醒');
 		
 		case '!離開':
 			var value;
@@ -282,17 +271,17 @@ function handleText(message, replyToken, source){
 					break;
 				case 'group':
 					value = source.groupId;
-					client.leaveGroup(value);
+					sqclient.leaveGroup(value);
 					break;
 				case 'room':
 					value = source.roomId;
-					client.leaveRoom(value);
+					sqclient.leaveRoom(value);
 					break;
 			}
 			//fallthrough
 		case '!取消 全部'	:
 			unsubAll(source);
-			return replyText(replyToken, '已取消所有通知');
+			return replyText(sqclient, replyToken, '已取消所有通知');
 		default:
 			return 0;
 	}
