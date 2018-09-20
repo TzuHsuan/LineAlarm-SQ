@@ -375,21 +375,7 @@ function maplehandleEvent(event){
 			}
 		case 'follow':
 		case 'join':
-			var value;
-			console.log(event.source.type);
-			switch (event.source.type){
-				case 'user':
-					value = event.source.userId;
-					break;
-				case 'group':
-					value = event.source.groupId;
-					break;
-				case 'room':
-					value = event.source.roomId;
-					break;
-			}
-			console.log(value);
-			sub('maple', value);
+			sub('maple', event.source);
 			return replyText(mapleclient, event.replyToken, '大家好，這裡是楓谷小秘書～');
 
 		case 'unfollow':
