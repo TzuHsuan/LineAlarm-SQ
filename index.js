@@ -155,7 +155,7 @@ new cron('0 55 10,15,19 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(sqclient, r.id,'公單即將出現，請準備迎接包子');
+				pushMessage(sqclient, r.id,'公單即將出現，油都加滿了嗎？');
 			})
 		}
 	})
@@ -169,7 +169,7 @@ new cron('0 50 13,19,22 * * *',() =>{
 	.then(result => {
 		if(result.rows.length>0){
 			result.rows.map(r=>{
-				pushMessage(sqclient, r.id,'便當店即將打烊，不要辜負了老闆的愛心 <3');
+				pushMessage(sqclient, r.id,'便當店即將打烊，再不快點就要餓肚子囉');
 			})
 		}
 	})
@@ -215,6 +215,45 @@ new cron('0 0 22 * * 0',() =>{
 	.catch(err=>console.error(err.stack));
 },null,true,'Asia/Taipei');
 
+
+//天城
+new cron('0 0 16 * * 2,5',() =>{
+	db.query('SELECT * FROM arena')
+	.then(result => {
+		if(result.rows.length>0){
+			result.rows.map(r=>{
+				pushMessage(sqclient, r.id,'今日有天城演武，別忘了報名囉！');
+			})
+		}
+	})
+	.catch(err=>console.error(err.stack));
+},null,true,'Asia/Taipei');
+
+new cron('0 0 20 * * 2,5',() =>{
+	db.query('SELECT * FROM arena')
+	.then(result => {
+		if(result.rows.length>0){
+			result.rows.map(r=>{
+				pushMessage(sqclient, r.id,'天城演武剩下半小時，記得要打喔！');
+			})
+		}
+	})
+	.catch(err=>console.error(err.stack));
+},null,true,'Asia/Taipei');
+
+
+//世界王
+new cron('0 0 19 * * *',() =>{
+	db.query('SELECT * FROM boss')
+	.then(result => {
+		if(result.rows.length>0){
+			result.rows.map(r=>{
+				pushMessage(sqclient, r.id,'世界王已出現，大夥們快上RRR');
+			})
+		}
+	})
+	.catch(err=>console.error(err.stack));
+},null,true,'Asia/Taipei');
 
 app.post('/callback/sq', line.middleware(sqconfig), (req, res) => {
 
@@ -262,12 +301,12 @@ const pushMessage = (client, targetID, message) => {
 };
 
 function sqsubAll(source) {
-	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
+	let tables = ['public_order', 'arena', 'goodnight', 'royal', 'bento', 'boss'];
 	tables.map(table => sub(table, source));
 }
 
 function squnsubAll(source) {
-	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento'];
+	let tables = ['public_order', 'rob', 'goodnight', 'royal', 'bento', 'arena', 'boss'];
 	tables.map(table => unsub(table, source));
 }
 
@@ -333,7 +372,7 @@ function sqhandleEvent(event){
 			}
 		case 'follow':
 		case 'join':
-			return replyText(sqclient, event.replyToken, '大家好，這裡是食契鬧鐘'+eol+'目前接受的指令：'+eol+'		!訂閱'+eol+'		!取消'+eol+'		!離開'+eol+'能用的參數：'+eol+'		公單'+eol+'		晚安'+eol+'		皇家'+eol+'		便當'+eol+'		全部');
+			return replyText(sqclient, event.replyToken, '大家好，這裡是食契鬧鐘'+eol+'目前接受的指令：'+eol+'		!訂閱'+eol+'		!取消'+eol+'		!離開'+eol+'能用的參數：'+eol+'		公單'+eol+'		晚安'+eol+'		皇家'+eol+'		便當'+eol+'		天城'+eol+'		世界王'+eol+'		全部');
 
 		case 'unfollow':
 		case 'leave':
@@ -420,6 +459,14 @@ function sqhandleText(message, replyToken, source){
 			sub('royal', source);		
 			return replyText(sqclient, replyToken, '已訂閱皇家提醒');
 
+		case '!訂閱 天城':
+			sub('arena', source);		
+			return replyText(sqclient, replyToken, '已訂閱天城提醒');
+
+		case '!訂閱 世界王':
+			sub('boss', source);		
+			return replyText(sqclient, replyToken, '已訂閱世界王提醒');
+
 
 		case '!取消 公單':
 			unsub('public_order', source)
@@ -440,6 +487,14 @@ function sqhandleText(message, replyToken, source){
 		case '!取消 皇家':
 			unsub('royal', source);		
 			return replyText(sqclient, replyToken, '已取消皇家提醒');
+
+		case '!取消 天城':
+			unsub('arena', source);		
+			return replyText(sqclient, replyToken, '已取消天城提醒');
+
+		case '!取消 世界王':
+			unsub('boss', source);		
+			return replyText(sqclient, replyToken, '已取消世界王提醒');
 		
 		case '!離開':
 			var value;
