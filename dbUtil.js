@@ -15,13 +15,12 @@ class dbUtil {
 			.then(result => {
 				subscribers[item] = result.rows;
 				console.log(subscribers);
-				return 1;
+				return Promise.resolve(item);
 			})
 			.catch(err=>console.error(err.stack));
 		}))
 		.then( x => {
 			console.log(x);
-			console.log(subscribers);
 			return subscribers;
 		})
 	}
