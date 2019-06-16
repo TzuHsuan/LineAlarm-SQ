@@ -10,17 +10,17 @@ const tableList = ['public_order', 'bento', 'royal', 'goodnight', 'arena', 'boss
 class dbUtil {
 	loadSub() {
 		let subscribers = {};
-		let loaded = tableList.map( item => {
+		Promise.all(tableList.map( item => {
 			db.query(`SELECT * FROM ${item}`)
 			.then(result => {
-				console.log(result);
 				subscribers[item] = result.rows;
 			})
 			.catch(err=>console.error(err.stack));
-		})
-		Promise.all(loaded).then(() => {
+		}))
+		.then(()=> {
+			console.log(subscribers);
 			return subscribers;
-		})	
+		})
 	}
 	sub(target, source) {
 		let value = source.userId||source.groupId||source.roomId;
