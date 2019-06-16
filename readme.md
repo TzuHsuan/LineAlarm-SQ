@@ -10,8 +10,19 @@ Though free Heroku instances goes to sleep after idling for a while, which will 
 
 you will need a Line offical account to use their messaging API.
 
-### ENV VARS
+### CONFIG VARS
+From Line account
 
+```
+- CHANNEL_ACCESS_TOKEN
+- CHANNEL_SECRET
+```
+
+Depending on your database setup
+
+```
+- DATABASE_URL
+```
 
 ## TODOS
 
