@@ -33,7 +33,7 @@ app.post('/callback/sq', line.middleware(sqconfig), (req, res) => {
 		return res.status(500).end()
 	}
 
-	Promise.all(req.body.events.map(sqhandleEvent))
+	Promise.all(req.body.events.map(handleEvent))
 	.then(()=>res.end())
 	.catch((err)=>{
 		console.log(err);
@@ -62,7 +62,7 @@ switch (event.type){
 		case 'message':
 			switch (event.message.type){
 				case 'text':
-					return sqhandleText(event.message, event.replyToken, event.source);
+					return handleText(event.message, event.replyToken, event.source);
 				case 'image':
 				case 'video':
 				case 'audio':
@@ -89,7 +89,7 @@ switch (event.type){
 	}
 }
 
-function sqhandleText(message, replyToken, source){
+function handleText(message, replyToken, source){
 	switch(message.text){
 		case '!訂閱 全部':
 			db.sub('all', source);
