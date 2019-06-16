@@ -17,18 +17,19 @@ const client = new line.Client(config);
 
 const app = express();
 
-var sub = db.loadSub();
-console.log(sub);
-
-Promise.all(db.loadSub()).then(subs => console.log(subs)).catch(err => console.log(err));
-
-messages.forEach(message => {
-	new cron(message.cronTime,() => {
-		subscribers[message.target].forEach(subscriber => {
-			pushMessage(subscriber, message.messages.reduce((a,b)=>{a+eol+b}));
-		})
-	},null,true,'Asia/Taipei');
+db.loadSub()
+.then(subscribers => {
+	messages.forEach(message => {
+		new cron(message.cronTime,() => {
+			subscribers[message.target].forEach(subscriber => {
+				pushMessage(subscriber, message.messages.reduce((a,b)=>{a+eol+b}));
+			})
+		},null,true,'Asia/Taipei');
+	});
+	console.log(subscribers);
 })
+.catch(err => console.error(err));
+
 app.post('/callback', line.middleware(config), (req, res) => {
 
 	if(!Array.isArray(req.body.events)){
