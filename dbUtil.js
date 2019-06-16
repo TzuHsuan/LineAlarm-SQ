@@ -14,6 +14,7 @@ class dbUtil {
 			db.query(`SELECT * FROM ${item}`)
 			.then(result => {
 				subscribers[item] = result.rows;
+				console.log(subscribers);
 			})
 			.catch(err=>console.error(err.stack));
 		}))
