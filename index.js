@@ -12,11 +12,13 @@ const sqconfig = {
 };
 const baseURL = process.env.BASE_URL;
 
+const db = new dbUtil;
+
 const sqclient = new line.Client(sqconfig);
 
 const app = express();
 
-var subscribers = dbUtil.loadSub();
+var subscribers = db.loadSub();
 
 messages.forEach(message => {
 	new cron(message.cronTime,() => {
