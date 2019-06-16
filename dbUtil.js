@@ -15,6 +15,7 @@ class dbUtil {
 			.then(result => {
 				subscribers[item] = result.rows;
 				console.log(subscribers);
+				return 1;
 			})
 			.catch(err=>console.error(err.stack));
 		}))
