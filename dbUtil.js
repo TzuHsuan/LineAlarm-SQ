@@ -11,7 +11,7 @@ class dbUtil {
 	loadSub() {
 		let subscribers = {};
 		Promise.all(tableList.map( item => {
-			db.query(`SELECT * FROM ${item}`)
+			return db.query(`SELECT * FROM ${item}`)
 			.then(result => {
 				subscribers[item] = result.rows;
 				return Promise.resolve(item);
