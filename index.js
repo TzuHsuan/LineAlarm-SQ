@@ -17,7 +17,10 @@ const client = new line.Client(config);
 
 const app = express();
 
-var sub = db.loadSub()
+var sub = db.loadSub();
+console.log(sub);
+
+Promise.all(db.loadSub()).then(subs => console.log(subs));
 
 messages.forEach(message => {
 	new cron(message.cronTime,() => {
