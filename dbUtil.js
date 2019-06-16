@@ -8,7 +8,7 @@ const db = new Pool({
 const tableList = ['public_order', 'bento', 'royal', 'goodnight', 'arena', 'boss'];
 
 const dbUtil = {
-	loadSub = () => {
+	const loadSub = () => {
 		let subscribers = {};
 		tableList.forEach( item => {
 			db.query(`SELECT * FROM ${item}`)
@@ -19,7 +19,7 @@ const dbUtil = {
 		})
 		return subscribers;	
 	},
-	sub = (target, source) => {
+	const sub = (target, source) => {
 		let value = source.userId||source.groupId||source.roomId;
 		target === 'all' ? (target = tableList) : (target = [target]);
 		target.forEach(table => {
@@ -32,7 +32,7 @@ const dbUtil = {
 			});
 		})	
 	},
-	unsub = (target, source) => {
+	const unsub = (target, source) => {
 		let value = source.userId||source.groupId||source.roomId;
 		target === 'all' ? (target = tableList) : (target = [target]);
 		target.forEach(table => {
