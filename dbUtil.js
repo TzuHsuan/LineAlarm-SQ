@@ -5,7 +5,7 @@ const db = new Pool({
   	ssl: true
 })
 
-const tableList = ['public_order', 'bento', 'royal', 'goodnight']
+const tableList = ['public_order', 'bento', 'royal', 'goodnight', 'arena', 'boss'];
 
 const dbUtil = {
 	loadSub = () => {
@@ -32,7 +32,7 @@ const dbUtil = {
 			});
 		})	
 	},
-	unSub = (target, source) => {
+	unsub = (target, source) => {
 		let value = source.userId||source.groupId||source.roomId;
 		target === 'all' ? (target = tableList) : (target = [target]);
 		target.forEach(table => {
