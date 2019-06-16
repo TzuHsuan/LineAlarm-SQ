@@ -1,0 +1,45 @@
+
+{
+	"messages":[
+		{
+			"cronTime":"0 55 10,15,19 * * *",
+			"target":"public_order",
+			"messages":["公單即將出現，請準備迎接包子"]
+		},
+		{
+			"cronTime":"0 50 13,19,22 * * *",
+			"target":"bento",
+			"messages":["便當店即將打烊，不要辜負了老闆的愛心 <3"]
+		},
+		{
+			"cronTime":"0 30 8,17 * * *",
+			"target":"royal",
+			"messages":["競技場次數將於半小時後更新"]
+		},
+		{
+			"cronTime":"0 0 23 * * 1-6",
+			"target":"goodnight",
+			"messages":["各位晚安，目前時間為晚上11點","還沒有建設以及打公會獸的請記得"]
+		},
+		{
+			"cronTime":"0 0 22 * * 0",
+			"target":"goodnight",
+			"messages":["公各位晚安，目前時間為晚上10點","今日公會獸會提早在11點回家睡覺","遺跡沒打完的進度也不能帶到明天喲","還沒完成的請盡快完成"]
+		},
+		{
+			"cronTime":"0 0 16 * * 2,5",
+			"target":"arena",
+			"messages":["今日有天城演武，別忘了報名囉！"]
+		},
+		{
+			"cronTime":"0 0 20 * * 2,5",
+			"target":"arena",
+			"messages":["天城演武剩下半小時，記得要打喔！"]
+		},
+		{
+			"cronTime":"0 0 19 * * *",
+			"target":"boss",
+			"messages":["世界王已出現，大夥們快上RRR"]
+		},
+	]
+}
