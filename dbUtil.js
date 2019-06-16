@@ -9,17 +9,22 @@ const tableList = ['public_order', 'bento', 'royal', 'goodnight', 'arena', 'boss
 
 class dbUtil {
 	loadSub() {
-		let subscribers = {};
-		Promise.all(tableList.map( item => {
-			return db.query(`SELECT * FROM ${item}`)
-			.then(result => {
-				subscribers[item] = result.rows;
-				return Promise.resolve(item);
+		return new Promise((resolve, reject) => {
+			let subscribers = {};
+			Promise.all(tableList.map( item => {
+				return db.query(`SELECT * FROM ${item}`)
+				.then(result => {
+					subscribers[item] = result.rows;
+					return Promise.resolve(item);
+				})
+				.catch(err=>console.error(err.stack));
+			}))
+			.then( () => {
+				resolve(subscribers);
 			})
-			.catch(err=>console.error(err.stack));
-		}))
-		.then( () => {
-			return Promise.resolve(subscribers);
+			.catch(err=> {
+				reject(err);
+			})
 		})
 	}
 	sub(target, source) {
