@@ -7,8 +7,8 @@ const db = new Pool({
 
 const tableList = ['public_order', 'bento', 'royal', 'goodnight', 'arena', 'boss'];
 
-const dbUtil = {
-	const loadSub = () => {
+class dbUtil {
+	loadSub() {
 		let subscribers = {};
 		tableList.forEach( item => {
 			db.query(`SELECT * FROM ${item}`)
@@ -18,8 +18,8 @@ const dbUtil = {
 			.catch(err=>console.error(err.stack));
 		})
 		return subscribers;	
-	},
-	const sub = (target, source) => {
+	}
+	sub(target, source) {
 		let value = source.userId||source.groupId||source.roomId;
 		target === 'all' ? (target = tableList) : (target = [target]);
 		target.forEach(table => {
@@ -31,8 +31,8 @@ const dbUtil = {
 					console.error(e.stack)
 			});
 		})	
-	},
-	const unsub = (target, source) => {
+	}
+	unsub(target, source) {
 		let value = source.userId||source.groupId||source.roomId;
 		target === 'all' ? (target = tableList) : (target = [target]);
 		target.forEach(table => {
@@ -47,4 +47,4 @@ const dbUtil = {
 	}
 }
 
-export default dbUtil;
+module.exports = dbUtil;

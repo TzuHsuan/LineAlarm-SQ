@@ -40,6 +40,6 @@
 			"cronTime":"0 0 19 * * *",
 			"target":"boss",
 			"messages":["世界王已出現，大夥們快上RRR"]
-		},
+		}
 	]
 }
