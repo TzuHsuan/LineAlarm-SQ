@@ -14,13 +14,13 @@ class dbUtil {
 			db.query(`SELECT * FROM ${item}`)
 			.then(result => {
 				subscribers[item] = result.rows;
-				console.log(subscribers);
 				return Promise.resolve(item);
 			})
 			.catch(err=>console.error(err.stack));
 		}))
 		.then( x => {
 			console.log(x);
+			console.log(subscribers);
 			return subscribers;
 		})
 	}
