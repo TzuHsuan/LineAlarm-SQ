@@ -20,7 +20,7 @@ const app = express();
 var sub = db.loadSub();
 console.log(sub);
 
-Promise.all(db.loadSub()).then(subs => console.log(subs));
+Promise.all(db.loadSub()).then(subs => console.log(subs)).catch(err => console.log(err));
 
 messages.forEach(message => {
 	new cron(message.cronTime,() => {
