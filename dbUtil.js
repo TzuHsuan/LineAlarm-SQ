@@ -18,10 +18,8 @@ class dbUtil {
 			})
 			.catch(err=>console.error(err.stack));
 		}))
-		.then( x => {
-			console.log(x);
-			console.log(subscribers);
-			return subscribers;
+		.then( () => {
+			return Promise.resolve(subscribers);
 		})
 	}
 	sub(target, source) {
