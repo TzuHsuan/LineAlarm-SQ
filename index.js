@@ -6,15 +6,14 @@ const dbUtil = require('./dbUtil.js');
 const messages = require('./messages.json').messages;
 
 
-const sqconfig = {
-	channelAccessToken: process.env.SQ_CHANNEL_ACCESS_TOKEN,
-	channelSecret: process.env.SQ_CHANNEL_SECRET
+const config = {
+	channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+	channelSecret: process.env.CHANNEL_SECRET
 };
-const baseURL = process.env.BASE_URL;
 
 const db = new dbUtil;
 
-const sqclient = new line.Client(sqconfig);
+const client = new line.Client(config);
 
 const app = express();
 
@@ -27,7 +26,7 @@ messages.forEach(message => {
 		})
 	},null,true,'Asia/Taipei');
 })
-app.post('/callback/sq', line.middleware(sqconfig), (req, res) => {
+app.post('/callback', line.middleware(config), (req, res) => {
 
 	if(!Array.isArray(req.body.events)){
 		return res.status(500).end()
@@ -143,11 +142,11 @@ function handleText(message, replyToken, source){
 					break;
 				case 'group':
 					value = source.groupId;
-					sqclient.leaveGroup(value);
+					client.leaveGroup(value);
 					break;
 				case 'room':
 					value = source.roomId;
-					sqclient.leaveRoom(value);
+					client.leaveRoom(value);
 					break;
 			}
 			//fallthrough to unsub all
