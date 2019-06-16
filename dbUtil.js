@@ -13,6 +13,7 @@ class dbUtil {
 		tableList.forEach( item => {
 			db.query(`SELECT * FROM ${item}`)
 			.then(result => {
+				console.log(result);
 				subscribers[item] = result.rows;
 			})
 			.catch(err=>console.error(err.stack));
