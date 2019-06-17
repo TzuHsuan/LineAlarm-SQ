@@ -22,7 +22,7 @@ db.loadSub()
 	messages.forEach(message => {
 		new cron(message.cronTime,() => {
 			subscribers[message.target].forEach(subscriber => {
-				pushMessage(subscriber, message.messages.reduce((a,b)=>{a+eol+b}));
+				pushMessage(subscriber.id, message.messages.reduce((a,b)=>{a+eol+b}));
 			})
 		},null,true,'Asia/Taipei');
 	});
