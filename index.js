@@ -26,7 +26,6 @@ db.loadSub()
 			})
 		},null,true,'Asia/Taipei');
 	});
-	console.log(subscribers);
 })
 .catch(err => console.error(err));
 
@@ -44,7 +43,7 @@ app.post('/callback', line.middleware(config), (req, res) => {
 	});
 });
 
-const replyText = (client, token, message) => {
+const replyText = (token, message) => {
 	message = Array.isArray(message)? message:[message];
 	return client.replyMessage(
 		token,
@@ -52,7 +51,7 @@ const replyText = (client, token, message) => {
 	);
 };
 
-const pushMessage = (client, targetID, message) => {
+const pushMessage = (targetID, message) => {
 	message = Array.isArray(message)? message:[message];
 	return client.pushMessage(
 		targetID,
